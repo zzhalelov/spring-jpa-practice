@@ -23,6 +23,16 @@ public class CategoryController {
         return categoryRepository.findById(id).orElseThrow();
     }
 
+    @GetMapping("/find-by-name/{name}")
+    public Category findByName(@PathVariable String name) {
+        return categoryRepository.findByNameIgnoreCase(name).orElseThrow();
+    }
+
+    @GetMapping("/find-by-name-containing/{name}")
+    public List<Category> findByNameContaining(@PathVariable String name) {
+        return categoryRepository.findByNameContainingIgnoreCase(name);
+    }
+
     @PostMapping
     public Category create(@RequestBody Category category) {
         return categoryRepository.save(category);
