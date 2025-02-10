@@ -26,6 +26,12 @@ public class ProductController {
         return productRepository.findById(id).orElseThrow();
     }
 
+    @GetMapping("/find-by-price-between")
+    public List<Product> findByPriceBetween(@RequestParam double priceMin,
+                                            @RequestParam double priceMax) {
+        return productRepository.findByPriceBetween(priceMin, priceMax);
+    }
+
     @PostMapping()
     public Product create(@RequestParam int categoryId,
                           @RequestBody Product product) {
