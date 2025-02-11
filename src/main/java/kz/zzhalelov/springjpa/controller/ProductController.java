@@ -32,6 +32,11 @@ public class ProductController {
         return productRepository.findByPriceBetween(priceMin, priceMax);
     }
 
+    @GetMapping("/find-by-name-containing/{name}")
+    public List<Product> findByNameContainingIgnoreCase(@PathVariable String name) {
+        return productRepository.findByNameContainingIgnoreCase(name);
+    }
+
     @PostMapping()
     public Product create(@RequestParam int categoryId,
                           @RequestBody Product product) {
