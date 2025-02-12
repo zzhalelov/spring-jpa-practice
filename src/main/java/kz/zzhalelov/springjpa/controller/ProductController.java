@@ -50,4 +50,19 @@ public class ProductController {
         product.setCategory(category);
         return productRepository.save(product);
     }
+
+    @PutMapping("/{id}")
+    public Product update(@PathVariable int id,
+                          @RequestBody Product product) {
+        Product existingProduct = productRepository
+                .findById(id).orElseThrow();
+        existingProduct.setName(product.getName());
+        existingProduct.setPrice(product.getPrice());
+        return productRepository.save(existingProduct);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable int id) {
+        productRepository.deleteById(id);
+    }
 }
