@@ -1,7 +1,6 @@
 package kz.zzhalelov.springjpa.controller;
 
-import kz.zzhalelov.springjpa.model.Category;
-import kz.zzhalelov.springjpa.model.Product;
+import kz.zzhalelov.springjpa.model.*;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
 import kz.zzhalelov.springjpa.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +15,18 @@ import java.util.Optional;
 public class ProductController {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
     @GetMapping
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public List<ProductDto> findAll() {
+        List<Product> products = productRepository.findAll();
+        return productMapper.toDto(products);
     }
 
     @GetMapping("/{id}")
-    public Product findById(@PathVariable int id) {
-        return productRepository.findById(id).orElseThrow();
+    public ProductDto findById(@PathVariable int id) {
+        Product product = productRepository.findById(id).orElseThrow();
+        return productMapper.toDto(product);
     }
 
     @GetMapping("/find-by-price-between")
@@ -44,11 +46,12 @@ public class ProductController {
     }
 
     @PostMapping()
-    public Product create(@RequestParam int categoryId,
-                          @RequestBody Product product) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
+    public ProductDto create(@RequestBody ProductCreateDto productCreateDto) {
+        Product product = productMapper.fromCreate(productCreateDto);
+        Category category = categoryRepository.findById(product.getCategory().getId()).orElseThrow();
         product.setCategory(category);
-        return productRepository.save(product);
+        productRepository.save(product);
+        return productMapper.toDto(product);
     }
 
     @PutMapping("/{id}")
