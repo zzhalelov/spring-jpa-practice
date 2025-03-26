@@ -6,16 +6,20 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "\"values\"")
+public class Value {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
-    private Double price;
+
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "option_id")
+    private Option option;
 }

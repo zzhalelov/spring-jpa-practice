@@ -8,13 +8,14 @@ import lombok.Setter;
 @Setter
 
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "options")
+public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String name;
-    private Double price;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
