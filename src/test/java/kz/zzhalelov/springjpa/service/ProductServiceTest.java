@@ -40,7 +40,6 @@ class ProductServiceTest {
 
         NoSuchElementException ex = assertThrows(NoSuchElementException.class, () -> productService.create(product, categoryId));
         assertEquals("Категория не найдена", ex.getMessage());
-
     }
 
     // 2. тест, где проверяете, что создается товар
@@ -89,10 +88,6 @@ class ProductServiceTest {
                 .when(productRepository.findById(productId))
                 .thenReturn(Optional.of(existingProduct));
 
-        Mockito
-                .when(productRepository.save(Mockito.any(Product.class)))
-                .thenAnswer(i -> i.getArgument(0));
-
         Product product = productService.update(updProduct, productId);
         assertEquals("Новое название", product.getName());
         assertEquals(1000.0, product.getPrice());
@@ -119,10 +114,6 @@ class ProductServiceTest {
         Mockito
                 .when(productRepository.findById(productId))
                 .thenReturn(Optional.of(existingProduct));
-
-//        Mockito
-//                .when(productRepository.save(Mockito.any(Product.class)))
-//                .thenAnswer(i -> i.getArgument(0));
 
         Product product = productService.update(updProduct, productId);
         assertEquals("Название", product.getName());
@@ -151,10 +142,6 @@ class ProductServiceTest {
         Mockito
                 .when(productRepository.findById(productId))
                 .thenReturn(Optional.of(existingProduct));
-
-//        Mockito
-//                .when(productRepository.save(Mockito.any(Product.class)))
-//                .thenAnswer(i -> i.getArgument(0));
 
         Product product = productService.update(updProduct, productId);
         assertEquals("Новое Название", product.getName());

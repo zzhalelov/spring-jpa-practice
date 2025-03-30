@@ -6,7 +6,6 @@ import kz.zzhalelov.springjpa.model.Product;
 import kz.zzhalelov.springjpa.model.Value;
 import kz.zzhalelov.springjpa.repository.OptionRepository;
 import kz.zzhalelov.springjpa.repository.ProductRepository;
-import kz.zzhalelov.springjpa.repository.ValueRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,8 +24,6 @@ class ValueServiceTest {
     ProductRepository productRepository;
     @Mock
     OptionRepository optionRepository;
-    @Mock
-    ValueRepository valueRepository;
 
     @InjectMocks
     ValueService valueService;
