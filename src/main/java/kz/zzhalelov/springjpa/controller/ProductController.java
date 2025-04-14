@@ -4,7 +4,9 @@ import kz.zzhalelov.springjpa.model.*;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
 import kz.zzhalelov.springjpa.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +27,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductDto findById(@PathVariable int id) {
-        Product product = productRepository.findById(id).orElseThrow();
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return productMapper.toDto(product);
     }
 

@@ -1,6 +1,8 @@
 package kz.zzhalelov.springjpa.controller;
 
 import kz.zzhalelov.springjpa.model.Category;
+import kz.zzhalelov.springjpa.model.CategoryDto;
+import kz.zzhalelov.springjpa.model.CategoryFullDto;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +16,18 @@ public class CategoryController {
     private final CategoryRepository categoryRepository;
 
     @GetMapping
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDto> findAll() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryDto::of)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Category findById(@PathVariable int id) {
-        return categoryRepository.findById(id).orElseThrow();
+    public CategoryFullDto findById(@PathVariable int id) {
+        return categoryRepository.findById(id)
+                .map(CategoryFullDto::of)
+                .orElseThrow();
     }
 
     @GetMapping("/find-by-name/{name}")
