@@ -48,6 +48,7 @@ public class ProductController {
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductDto create(@RequestBody ProductCreateDto productCreateDto) {
         Product product = productMapper.fromCreate(productCreateDto);
         Category category = categoryRepository.findById(product.getCategory().getId()).orElseThrow();

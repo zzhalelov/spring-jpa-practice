@@ -1,5 +1,6 @@
 package kz.zzhalelov.springjpa.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.zzhalelov.springjpa.model.Category;
 import kz.zzhalelov.springjpa.model.Option;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -25,6 +28,34 @@ public class CategoryControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Test
+    @SneakyThrows
+    void create_correctObjectGiven_shouldReturnCreated() {
+        int assignableCategoryId = 1;
+
+        Category category = new Category();
+        category.setName("Мебель");
+
+        Mockito
+                .when(categoryRepository.save(Mockito.any(Category.class)))
+                .thenAnswer(invocationOnMock -> {
+                    Category argument = invocationOnMock.getArgument(0, Category.class);
+                    argument.setId(assignableCategoryId);
+                    return argument;
+                });
+
+        String json = objectMapper.writeValueAsString(category);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(assignableCategoryId))
+                .andExpect(jsonPath("$.name").value(category.getName()));
+    }
 
     @Test
     @SneakyThrows

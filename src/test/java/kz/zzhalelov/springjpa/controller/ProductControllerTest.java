@@ -1,7 +1,9 @@
 package kz.zzhalelov.springjpa.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.zzhalelov.springjpa.model.Category;
 import kz.zzhalelov.springjpa.model.Product;
+import kz.zzhalelov.springjpa.model.ProductCreateDto;
 import kz.zzhalelov.springjpa.model.ProductMapper;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
 import kz.zzhalelov.springjpa.repository.ProductRepository;
@@ -10,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -29,6 +33,48 @@ public class ProductControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Test
+    @SneakyThrows
+    void create_correctObjectGiven_shouldReturnCreated() {
+        int productId = 1;
+        int categoryId = 1;
+
+        Category category = new Category();
+        category.setName("Мебель");
+        category.setId(categoryId);
+
+        Mockito
+                .when(categoryRepository.findById(Mockito.anyInt()))
+                .thenReturn(Optional.of(category));
+
+        ProductCreateDto productCreateDto = new ProductCreateDto();
+        productCreateDto.setCategoryId(categoryId);
+        productCreateDto.setName("Тумба");
+        productCreateDto.setPrice(10_000.0);
+
+        Mockito
+                .when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocationOnMock -> {
+                    Product product = invocationOnMock.getArgument(0, Product.class);
+                    product.setId(productId);
+                    return product;
+                });
+
+        String json = objectMapper.writeValueAsString(productCreateDto);
+
+        mockMvc.perform(post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(productId))
+                .andExpect(jsonPath("$.name").value(productCreateDto.getName()))
+                .andExpect(jsonPath("$.price").value(productCreateDto.getPrice()))
+                .andExpect(jsonPath("$.category").value(category.getName()));
+    }
 
     @Test
     @SneakyThrows

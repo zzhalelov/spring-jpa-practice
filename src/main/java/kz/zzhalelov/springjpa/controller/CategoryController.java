@@ -5,6 +5,7 @@ import kz.zzhalelov.springjpa.model.CategoryDto;
 import kz.zzhalelov.springjpa.model.CategoryFullDto;
 import kz.zzhalelov.springjpa.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,8 +42,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category create(@RequestBody Category category) {
-        return categoryRepository.save(category);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryDto create(@RequestBody Category category) {
+        return CategoryDto.of(categoryRepository.save(category));
     }
 
     @PutMapping("/{id}")
